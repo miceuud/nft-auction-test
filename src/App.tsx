@@ -1,35 +1,38 @@
-import { useEffect, useState } from 'react'
+/* eslint-disable no-console */
+// import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { MetaMask } from './connectors'
+import { Routes, Route, Link } from 'react-router-dom'
+// import { MetaMask } from './connectors'
+import Home from './components/home'
+import CreateAuction from './components/CreateNft'
+
 import './App.css'
 
 function App() {
-  const { active, activate, library, error } = useWeb3React()
-  const [blockNumber, setBlockNumber] = useState(null)
+  const { account } = useWeb3React()
+  // let signer
 
-  useEffect(() => {
-    if (!active) {
-      activate(MetaMask)
-    }
-
-    if (active) {
-      library.getBlockNumber().then(setBlockNumber)
-    }
-  }, [active, library, activate])
-
-  let content = null
-
-  if (error) {
-    content = 'There was an error'
-  } else if (active) {
-    content = blockNumber
-      ? `Block number: ${blockNumber}`
-      : 'Fetching block number'
-  } else {
-    content = 'Loading...'
-  }
-
-  return <div className="App">{content}</div>
+  return (
+    <>
+      <div>
+        <nav>
+          <div>
+            <Link to="/"> DApp Auction</Link>
+          </div>
+          <div>
+            <Link to="/create-auction">Create NFT </Link>
+          </div>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="create-auction" element={<CreateAuction />} />
+        </Routes>
+      </div>
+      {/* <Home /> */}
+      <div>{account}</div>
+      {/* <div>{signer}</div> */}
+    </>
+  )
 }
 
 export default App
