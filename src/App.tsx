@@ -2,7 +2,7 @@
 // import { useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Routes, Route, Link } from 'react-router-dom'
-// import { MetaMask } from './connectors'
+
 import Home from './components/home'
 import CreateAuction from './components/CreateNft'
 
@@ -28,9 +28,6 @@ function App() {
           <Route path="create-auction" element={<CreateAuction />} />
         </Routes>
       </div>
-      {/* <Home /> */}
-      <div>{account}</div>
-      {/* <div>{signer}</div> */}
     </>
   )
 }

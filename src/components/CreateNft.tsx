@@ -16,7 +16,7 @@ export default function CreateNft() {
   const { library } = useWeb3React()
 
   const nftContract = new ethers.Contract(
-    '0x4b379A417C42D12E655ca1C5CbBc4fDC04E67F15',
+
     MyNFT.abi,
     library.getSigner(),
   )
