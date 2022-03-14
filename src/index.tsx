@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Web3ReactProvider } from '@web3-react/core'
+import { BrowserRouter } from 'react-router-dom'
 import { ethers } from 'ethers'
 import './index.css'
 import App from './App'
@@ -11,7 +12,9 @@ function getLibrary(provider: ethers.providers.ExternalProvider) {
 
 ReactDOM.render(
   <Web3ReactProvider getLibrary={getLibrary}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </Web3ReactProvider>,
   document.getElementById('root'),
 )
