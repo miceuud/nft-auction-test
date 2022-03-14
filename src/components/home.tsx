@@ -26,7 +26,7 @@ export default function Home() {
 
     if (active) {
       const auctionContract = new ethers.Contract(
-        '0xeC4A8393B5ae9E6937Aa557b7b273808AF49D856',
+
         NFTAuction.abi,
         library.getSigner(account),
       )
