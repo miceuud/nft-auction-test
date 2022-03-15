@@ -6,17 +6,15 @@ async function main() {
 
   await nftAuction.deployed()
 
-  const auctionAddress = nftAuction.address
+  console.log('auction', nftAuction.address)
 
   const MyNFT = await hre.ethers.getContractFactory('MyNFT')
-  const creatNft = await MyNFT.deploy(auctionAddress)
+  const myNft = await MyNFT.deploy(nftAuction.address)
 
-  await creatNft.deployed()
+  await myNft.deployed()
 
-  console.log('this is auction address:', nftAuction.address)
-  console.log('this is nft address:', creatNft.address)
+  console.log('nft: ', myNft.address)
 }
-
 main()
   .then(() => process.exit(0))
   .catch((error) => {
