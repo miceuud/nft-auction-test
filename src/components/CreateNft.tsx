@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -5,29 +7,29 @@
 
 // --------------------------
 import { useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
+
 import ipfs from '../helper/ipfs'
 import uploadToIpfs from '../helper/ipfsUpload'
 
 import MyNFT from '../artifacts/contracts/CreatNFT.sol/MyNFT.json'
 
+import NFTAuction from '../artifacts/contracts/Auction.sol/NFTAuction.json'
+
+declare let window: any
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+
 export default function CreateNft() {
-  const { library } = useWeb3React()
-
-  const nftContract = new ethers.Contract(
-
-    MyNFT.abi,
-    library.getSigner(),
-  )
+  const [uploads, setUploads] = useState()
 
   const [state, setState] = useState({
     name: '',
     amount: 0,
   })
 
-  let imageUri: string | undefined
-  const onChange = async (e: any) => {
+  let imageUri
+  const onChange = async (e) => {
     try {
       // upload image to ipfs
       imageUri = await ipfs(e.target.files[0])
@@ -37,23 +39,47 @@ export default function CreateNft() {
     }
   }
   //  get input fields
-  const handleChange = (e: any) => {
+  const handleChange = (e) => {
     setState({
       ...state,
       [e.target.name]: e.target.value,
     })
   }
-  // upload all meta data to ipfs
+  // // upload all meta data to ipfs
   const upload = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    await provider.send('eth_requestAccounts', [])
+    const signer = provider.getSigner()
+
+    const nftContract = new ethers.Contract(
+      '0xE0b00Ccc2A0437d0B218FcfC65E50Ca29dEf2426',
+      MyNFT.abi,
+      signer,
+    )
+
+    const auction = new ethers.Contract(
+      '0xE0b00Ccc2A0437d0B218FcfC65E50Ca29dEf2426',
+      NFTAuction.abi,
+      signer,
+    )
     try {
       const data = await uploadToIpfs(state, imageUri)
       const metadata = await ipfs(JSON.stringify(data))
+      // let history = useNavigate()
 
       const tokenUri = `https://ipfs.io/ipfs/${metadata}`
       // create nft token
       const tx = await nftContract.createToken(tokenUri)
       const txReceipt = await tx.wait()
+
+      const auctionTx = await auction.createAuction(
+        '0xE0b00Ccc2A0437d0B218FcfC65E50Ca29dEf2426',
+        1,
+        50,
+      )
+      const auctionReceipt = auctionTx.wait()
       // eslint-disable-next-line no-console
+      // history.push('/')
       console.log(txReceipt.events)
     } catch (error) {
       console.log(error)
