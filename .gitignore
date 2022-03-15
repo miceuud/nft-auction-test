@@ -7,6 +7,8 @@
 
 /.vscode
 
+/secrets.js
+
 # testing
 /coverage
 
