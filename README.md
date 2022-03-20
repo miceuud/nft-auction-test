@@ -15,12 +15,9 @@
 - Start the app by running `npm run dev` or `yarn start`
 
 
-##. Testing (Hardhat)
+## Testing (Hardhat)
 
 - Run test locally without Ether or Dai 
-
-
-## Test Option 1 (Ganache)
 
 - Run everything locally using ganache-cli, and skip requesting Ether and Dai process
 
