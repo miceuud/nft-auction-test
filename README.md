@@ -7,7 +7,7 @@ You must have the following installed on your Machine to run this code:
 - Solidity compiler
 - Metamask chrome or Firefox plugin
 - Hardhat
-- Private API key - Rinkeby 
+- Alchemy Private API key - Rinkeby 
 
 ## To run this project  
 
