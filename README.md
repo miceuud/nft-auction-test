@@ -36,7 +36,7 @@ You must have the following installed on your Machine to run this code:
 
 ## Testing (Hardhat)
 
-- Run test locally with hardhat account and Mock Dai tokens 
+- Run test locally with hardhat accounts and Mock Dai tokens 
 
 - To speed up test, change the auction end-time in the auction contract to 30 seconds
 
