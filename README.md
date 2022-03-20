@@ -14,12 +14,16 @@
 
 - Start the app by running `npm run dev` or `yarn start`
 
-- Request Ethers from the rinkeby faucet https://faucet.rinkeby.io/ from your metamask wallet
 
-- Visit https://app.compound.finance/ to borrow atleast 500 Dai with your test Ether from your metamask wallet
+##. Testing (Hardhat)
 
-- Add Dai token to your metamask wallet using this contract address `0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea`
+- Run test locally without Ether or Dai 
 
-- Get an Alchemy API key if don't have one from /www.alchemy.com/
 
-- Check the `secrets.json` example and replace the details with yours
+## Test Option 1 (Ganache)
+
+- Run everything locally using ganache-cli, and skip requesting Ether and Dai process
+
+- Run `npx hardhat test`
+
+
