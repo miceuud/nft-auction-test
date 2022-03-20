@@ -36,7 +36,7 @@ You must have the following installed on your Machine to run this code:
 
 ## Testing (Hardhat)
 
-- Run test locally without Ether or Dai 
+- Run test locally with hardhat account and Mock Dai tokens 
 
 - Run `npx hardhat test`
 
