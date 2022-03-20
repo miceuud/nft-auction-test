@@ -1,12 +1,18 @@
 # PROTOFIRE NFT Auction DApp
 
-## Setup Process
+## To run this project locally 
 
 - First clone this repository `https://github.com/miceuud/protofire-nft-auction-test`
 
 - cd into the cloned project folder on your terminal from your machine
 
-- Run `npm install`
+- Run `npm install` or `yarn install` to install dependencies
+
+- Start your local hardhat node by running `npx hardhat node`
+
+- In a seperate terminal run `npx hardhat run scripts/deploy.js --network localhost`
+
+- Start the app by running `npm run dev` or `yarn start`
 
 - Request Ethers from the rinkeby faucet https://faucet.rinkeby.io/ from your metamask wallet
 
