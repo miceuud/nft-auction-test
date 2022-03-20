@@ -8,7 +8,7 @@
 
 // --------------------------
 import { useState } from 'react'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 
 import ipfs from '../helper/ipfs'
 import uploadToIpfs from '../helper/ipfsUpload'
@@ -21,8 +21,6 @@ declare let window: any
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 export default function CreateNft() {
-  // const [uploads, setUploads] = useState()
-
   const [state, setState] = useState({
     name: '',
     amount: 0,
@@ -38,9 +36,7 @@ export default function CreateNft() {
 
       console.log('ipfs-here: ', imageUri)
     } catch (error) {
-      console.log(`unable to upload: ${error}`)
-
-      console.log('image: ', imageUri)
+      console.log(`unable to upload: ${error.message}`)
     }
   }
   //  get input fields
@@ -57,13 +53,13 @@ export default function CreateNft() {
     const signer = provider.getSigner()
 
     const nft = new ethers.Contract(
-      '0xd9A0dA0d9B8432718f963C2858C4F1ED3eC9B33D',
+      process.env.REACT_APP_NFT_ADDRESS,
       MyNFT.abi,
       signer,
     )
 
     const auction = new ethers.Contract(
-      '0xcBc4507698e61339CeF0F0C442DE74260ACFFff1',
+      process.env.REACT_APP_AUCTION_ADDRESS,
       NFTAuction.abi,
       signer,
     )
@@ -84,18 +80,16 @@ export default function CreateNft() {
       const tokenId = Number(txReceipt.events[0].args[2])
 
       const auctionTx = await auction.createAuction(
-        '0xd9A0dA0d9B8432718f963C2858C4F1ED3eC9B33D',
+        process.env.REACT_APP_AUCTION_ADDRESS,
         tokenId,
         state.amount,
+        { gasLimit: 5000000 },
       )
-      const auctionReceipt = await auctionTx.wait()
-      // eslint-disable-next-line no-console
-      console.log(txReceipt.auctionReceipt)
+      await auctionTx.wait()
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
     }
   }
-
   return (
     <div>
       <div>
