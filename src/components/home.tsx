@@ -35,7 +35,6 @@ export default function Home() {
   )
 
   const daiAddress = process.env.REACT_APP_DIA_ADDRESS
-  // const daiAddress = '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa'
 
   const daiContract = new ethers.Contract(daiAddress, daiAbi, signer)
 
@@ -128,20 +127,36 @@ export default function Home() {
   return (
     <>
       <div>
-        <header> Welcome to NFT Auction</header>
-        <div> Place a bid and you might be lucky to win</div>
-        <h4>Auction Item</h4>
+        <div className="main">
+          <header> Welcome to NFT Auction</header>
+          <div className="title">
+            {' '}
+            Place a bid and you might be lucky to win
+          </div>
+          <h4>Auction Item</h4>
+        </div>
+
+        {/* <div className="main">
+          {nft && <> There is no item currently been auctioned</>}
+        </div> */}
       </div>
-      <div className="assets-container">
+      <div className="assets-container main">
         {nft && (
           <>
             <div>
               <img src={nft.image} width={150} height={150} alt="" />
             </div>
-            <div> {nft.name}</div>
-            <div> {nft.amount}</div>
+            <div>
+              {' '}
+              <span className="details"> NFT name: </span>
+              {nft.name}
+            </div>
+            <div>
+              {' '}
+              <span>Starting Bid: </span> {nft.amount}
+            </div>
 
-            <button type="button" onClick={startBid}>
+            <button type="button" className="btn" onClick={startBid}>
               {' '}
               Start Bid
             </button>
@@ -159,22 +174,26 @@ export default function Home() {
           </>
         )}
       </div>
-      <div>
-        <div>Congrats the bid has end</div>
-        <div>
-          <span>If you won, claim price </span>{' '}
-          <button type="button" onClick={claim}>
-            {' '}
-            Claim
-          </button>
-        </div>
-        <div className="">
-          <span>Else Redeem your token</span>{' '}
-          <button type="button" onClick={redeem}>
-            {' '}
-            Redeem
-          </button>
-        </div>
+      <div className="main">
+        {nft && (
+          <>
+            <div>Congrats the bid has end</div>
+            <div className="claim">
+              <span>If you won, claim price </span>{' '}
+              <button type="button" onClick={claim}>
+                {' '}
+                Claim
+              </button>
+            </div>
+            <div className="">
+              <span>Else Redeem your token</span>{' '}
+              <button type="button" onClick={redeem}>
+                {' '}
+                Redeem
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </>
   )
