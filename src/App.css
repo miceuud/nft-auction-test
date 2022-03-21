@@ -25,4 +25,18 @@ button {
 a {
   text-decoration: none;
 }
-
+.assets-container {
+  margin-right: 2rem;
+}
+.title {
+  margin-top: 1rem;
+}
+.claim {
+  margin: 0.6rem;
+}
+.main {
+  margin-left: 3rem;
+}
+input {
+  margin: 0.6rem;
+}
