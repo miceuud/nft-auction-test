@@ -93,8 +93,8 @@ export default function CreateNft() {
   return (
     <div>
       <div>
-        <div>Create Auction</div>
-        <div>
+        <div className="main">
+          <div>Create Auction</div>
           <form>
             <div>
               <span> Asset Name:</span>{' '}
@@ -116,7 +116,7 @@ export default function CreateNft() {
               />
             </div>
             <div>
-              <span> Nft</span>
+              <span> Nft: </span>
               <input type="file" name="" id="" multiple onChange={onChange} />
             </div>
 
