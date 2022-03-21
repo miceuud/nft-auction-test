@@ -4,7 +4,6 @@
 
 You must have the following installed on your Machine to run this code:
 
-- Solidity compiler
 - Metamask chrome or Firefox plugin
 - Hardhat
 - Alchemy Private API key - Rinkeby 
