@@ -13,60 +13,112 @@ import axios from 'axios'
 import MyNFT from '../artifacts/contracts/CreatNFT.sol/MyNFT.json'
 import NFTAuction from '../artifacts/contracts/Auction.sol/NFTAuction.json'
 
-import logo from '../images/logo192.png'
-import NftAsset from './nftItem'
+import daiAbi from '../daiAbi/abi.json'
 
 declare let window: any
-// const user = {
-//   name: 'Hedy Lamarr',
-//   imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
-//   imageSize: 90,
-// }
+let signerAddress
 
 export default function Home() {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
+
   const signer = provider.getSigner()
 
   const auctionContract = new ethers.Contract(
-    '0xcBc4507698e61339CeF0F0C442DE74260ACFFff1',
+    process.env.REACT_APP_AUCTION_ADDRESS,
     NFTAuction.abi,
     signer,
   )
   const nftContract = new ethers.Contract(
-    '0xfd11dC967b57C184F2864d40049109561221Ba9E',
+    process.env.REACT_APP_NFT_ADDRESS,
     MyNFT.abi,
     provider,
   )
+
+  const daiAddress = process.env.REACT_APP_DIA_ADDRESS
+  // const daiAddress = '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa'
+
+  const daiContract = new ethers.Contract(daiAddress, daiAbi, signer)
+
   const [nft, setNft] = useState(null)
-  const [disable, setDisable] = useState(false)
-  const [state, setState] = useState(0)
+  const [bidAmount, setBidAmount] = useState(0)
 
   const fetchAuction = async () => {
-    const nftItem = await nftContract.fetchTokenUri()
-
-    const data = await axios.get(nftItem)
-
-    // const image = await axios.get(data.data.image)
-    // console.log(image)
-    // console.log(data.data)
-    setNft(data.data)
+    try {
+      const nftItem = await nftContract.fetchTokenUri()
+      const data = await axios.get(nftItem)
+      console.log(data)
+      setNft(data.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const startBid = async () => {
-    const startAuction = await auctionContract.start()
-    startAuction.wait()
-    console.log(startAuction)
+    try {
+      const startAuction = await auctionContract.start()
+      await startAuction.wait()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleChange = (e) => {
-    setState(state)
+    setBidAmount(e.target.value)
   }
 
   const bid = async () => {
-    const bidTx = await auctionContract.bid(1)
-    bidTx.wait()
+    try {
+      signerAddress = await signer.getAddress()
 
-    console.log(bidTx)
+      const bool = await daiContract.approve(
+        process.env.REACT_APP_AUCTION_ADDRESS,
+        bidAmount,
+      )
+      await bool.wait()
+      console.log(bool)
+      if (bool) {
+        const daiBalance = await daiContract.allowance(
+          signerAddress,
+          process.env.REACT_APP_AUCTION_ADDRESS,
+        )
+        if (daiBalance) {
+          const userBid = await auctionContract.bid(bidAmount, {
+            gasLimit: 5000000,
+          })
+          const tx = await userBid.wait()
+          console.log(tx)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const end = async () => {
+    try {
+      const endBid = await auctionContract.end()
+      await endBid.wait()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const claim = async () => {
+    try {
+      const startAuction = await auctionContract.claimWin()
+      await startAuction.wait()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const redeem = async () => {
+    try {
+      const startAuction = await auctionContract.redeemBid()
+      await startAuction.wait()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -79,13 +131,8 @@ export default function Home() {
         <header> Welcome to NFT Auction</header>
         <div> Place a bid and you might be lucky to win</div>
         <h4>Auction Item</h4>
-
-        {/*
-        <div>{nft.name}</div>
-        <div>{nft.amount}</div> */}
-        {/* <img src="{nft.image}" alt="" /> */}
       </div>
-      <div>
+      <div className="assets-container">
         {nft && (
           <>
             <div>
@@ -94,25 +141,40 @@ export default function Home() {
             <div> {nft.name}</div>
             <div> {nft.amount}</div>
 
-            <button
-              type="button"
-              disabled={disable}
-              onClick={() => {
-                startBid
-                setDisable(true)
-              }}
-            >
+            <button type="button" onClick={startBid}>
               {' '}
               Start Bid
             </button>
 
             <div>
               <span>Bid :</span>{' '}
-              <input type="number" value={state} onChange={handleChange} />
-              <button type="button">place bid</button>
+              <input type="number" value={bidAmount} onChange={handleChange} />
+              <button type="button" onClick={bid}>
+                place bid
+              </button>
+              <button type="button" onClick={end}>
+                end bid
+              </button>
             </div>
           </>
         )}
+      </div>
+      <div>
+        <div>Congrats the bid has end</div>
+        <div>
+          <span>If you won, claim price </span>{' '}
+          <button type="button" onClick={claim}>
+            {' '}
+            Claim
+          </button>
+        </div>
+        <div className="">
+          <span>Else Redeem your token</span>{' '}
+          <button type="button" onClick={redeem}>
+            {' '}
+            Redeem
+          </button>
+        </div>
       </div>
     </>
   )
