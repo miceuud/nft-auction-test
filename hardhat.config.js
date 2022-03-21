@@ -16,13 +16,11 @@ module.exports = {
     artifacts: './src/artifacts',
   },
   networks: {
+    // defaultNetwork: 'rinkeby',
     hardhat: {},
     rinkeby: {
-      // url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      url: `https://eth-rinkeby.alchemyapi.io/v2/MpNnMRTDLXJP1ehoWi3VK-wlsCH8l4ED`,
-      accounts: [
-        `0x5fa079190e4c3ee7032f92935f03882e27e96986a337b4a928d35447d09b0af4`,
-      ],
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMYPRIVATE_API_KEY}`,
+      accounts: [`0x${METAMASK_PRIVATE_KEY}`],
     },
   },
 }
