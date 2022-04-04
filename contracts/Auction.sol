@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -12,7 +12,7 @@ import "./DaiToken.sol";
 /// @author Mike Udoh
 /// @dev mint token by calling the creat token function
 
-contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
+contract NFTAuction is ReentrancyGuard, Ownable {
  
   address public nftAddress;
   address public winner;
@@ -25,7 +25,7 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
   bool winClaimed;
   bool bidRedeemed;
 
-  // uint base = 10 ** 18;
+  uint base = 10 ** 18;
   
   event AuctionsStatus(bool indexed started, string indexed _msg);
   event Bid(address indexed _bidder, uint indexed amount);
@@ -37,19 +37,18 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
   mapping(address => uint) public bids;
   mapping(address => bool) public hasBidded;
 
-
   address[] public bidders;
   IERC20 dai;
 
-  constructor (address _daiTokenAddress) ERC721("Dai Stable", "DAI") {
+  constructor (address _daiTokenAddress) {
      dai = IERC20(_daiTokenAddress);
   }
   
   function createAuction (address _nft,uint _nftTokenId,uint _minimumBid)  external onlyOwner {
+    require(!startAuction, "Auction already started");
     nftAddress = _nft;
     nftTokenId = _nftTokenId;
-    minimumBidAmount = _minimumBid ; 
-    require(!startAuction, "Auction already started");
+    minimumBidAmount = _minimumBid; 
     IERC721(nftAddress).transferFrom(msg.sender, address(this), nftTokenId);
     emit AuctionsStatus(true, "Auction created");
   } 
@@ -57,7 +56,7 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
   function start () external onlyOwner {
     require(!startAuction, "Auction already started");
     startAuction = true;
-    endAuctionTime = block.timestamp + 10 minutes  ; 
+    endAuctionTime = block.timestamp + 10 seconds  ; 
     highestBiddingAmount = minimumBidAmount;
     emit AuctionsStatus(true, "Auction started");
   }
@@ -65,7 +64,6 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
   function bid(uint _amount) external nonReentrant() {
     require(msg.sender != owner(), "you are not allow to bid");
     require(block.timestamp < endAuctionTime, "Auction has ended");
-    // _amount = _amount * base;
     require(_amount > minimumBidAmount , "Bids must be greater than starting Bid"); 
     require(!hasBidded[msg.sender], "You can only bid once");
     bids[msg.sender] += _amount;     
@@ -84,7 +82,6 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
     require(block.timestamp > endAuctionTime, "This auction hasn't been completed");
     require(startAuction, "Auction has not started yet");
     require(!endAuction, "Auction has ended");
-
     endAuction = true;
     emit AuctionClosed(true, "this auction is closed");
   }
@@ -97,7 +94,6 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
     bids[msg.sender] = 0;
     winClaimed = true;
     IERC721(nftAddress).transferFrom(address(this),msg.sender, nftTokenId);
-  
     emit RewardClaimed(msg.sender, "winner claims reward");
   }
 
@@ -105,9 +101,8 @@ contract NFTAuction is ERC721URIStorage, ReentrancyGuard, Ownable {
     require(block.timestamp > endAuctionTime, "This auction hasn't been completed");
     require(hasBidded[msg.sender], "You have no bid");
     require(endAuction, "Auction still ongoing");
-
     require(!bidRedeemed, "you have claimed your winning already");
-
+    
     uint _bid = bids[msg.sender];
     bidRedeemed = true;
     bids[msg.sender] = 0;
